@@ -57,19 +57,33 @@ export const AppReducer = (state, action) => {
                 ...state,
                 budget
             };
-        case 'SET_BUDGET':
-            action.type = "DONE";
-            state.budget = action.payload;
+        // case 'SET_BUDGET':
+        //     action.type = "DONE";
+        //     state.budget = action.payload;
 
-            return {
-                ...state,
-            };
-        case 'CHG_CURRENCY':
-            action.type = "DONE";
-            state.currency = action.payload;
-            return {
-                ...state
-            }
+        //     return {
+        //         ...state,
+        //     };
+            case 'SET_BUDGET':
+                // Calculate remaining and total spent based on the new budget
+                action.type = "DONE";
+                const newBudget = action.payload;
+                const newTotalExpenses = state.expenses.reduce((total, item) => {
+                    return total + item.cost;
+                }, 0);
+                const newRemaining = newBudget - newTotalExpenses;
+                if (newBudget < newTotalExpenses) {
+                    // If the new budget is less than the total spending, return the state without updating
+                    alert("New budget cannot be lower than total spending!");
+                    return state;
+                } else 
+                return {
+                    ...state,
+                    budget: newBudget,
+                    remaining: newRemaining,
+                };
+        case 'CHANGE_CURRENCY':
+            return { ...state, currency: action.payload };
 
         default:
             return state;
